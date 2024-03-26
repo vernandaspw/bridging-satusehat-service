@@ -13,4 +13,14 @@ class SphairaParamedic extends Model
     protected $table = 'Paramedic';
     protected $guarded = ['ParamedicID'];
     protected $primaryKey = 'ParamedicID';
+    public $timestamps = false;
+
+    public function Specialty()
+    {
+        return $this->belongsTo(SphairaSpecialty::class, 'SpecialtyCode', 'SpecialtyCode');
+    }
+    public function sysGeneralCode()
+    {
+        return $this->belongsTo(SphairasysGeneralCode::class, 'GCParamedicType', 'GeneralCodeID');
+    }
 }
