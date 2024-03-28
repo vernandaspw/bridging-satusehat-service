@@ -217,6 +217,9 @@ class RegistrationRajalController extends Controller
         $datas = [
             "no_registrasi" => $registration->RegistrationNo,
             'ServiceUnitID' => $registration->ServiceUnitID,
+            'RoomID' => $registration->RoomID,
+            'RoomCode' => $registration->service_room->RoomCode,
+            'RoomName' => $registration->service_room->RoomName,
             "nama_pasien" => $registration->pasien->PatientName,
             "nik" => $registration->pasien->SSN,
             "no_mr" => $registration->MedicalNo,
