@@ -21,17 +21,19 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(['token'])->group(function () {
-
+    // DOKTER SERVICE
     Route::get('dokter', [DokterController::class,'get']);
     Route::get('dokter/detail/{kode}', [DokterController::class,'getByKode']);
     Route::post('dokter/ihs/{kode}', [DokterController::class,'updateIHSbyKode']);
 
+
+    // PASIEN SERVICE
     Route::get('pasien', [PasienController::class,'get']);
     Route::get('pasien/detail/{nik}', [PasienController::class,'getByNik']);
     Route::post('pasien/ihs/{norm}', [PasienController::class,'updateIHSByNorm']);
 
-    Route::get('ss/pasien', [SsPasienController::class,'get']);
-    Route::get('ss/pasien/sync', [SsPasienController::class,'sync']);
+    // Route::get('ss/pasien', [SsPasienController::class,'get']);
+    // Route::get('ss/pasien/sync', [SsPasienController::class,'sync']);
 
     Route::get('registration', [RegistrationController::class,'get']);
     Route::get('registration/detail', [RegistrationController::class,'getByNoreg']);

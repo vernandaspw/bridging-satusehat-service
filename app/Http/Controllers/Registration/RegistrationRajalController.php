@@ -106,6 +106,7 @@ class RegistrationRajalController extends Controller
                 'RegistrationDateTime' => $registration->RegistrationDateTime,
                 'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
                 'ss_encounter_id' => $registration->EncounterIHS,
+                'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
                 'diagnosas' => $registration->getRmeDiagnosa($registration->RegistrationNo),
             ];
         }
@@ -163,6 +164,7 @@ class RegistrationRajalController extends Controller
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
                 "kode_dokter" => $registration->dokter->ParamedicCode,
+                "nik_dokter" => $registration->dokter->TaxRegistrantNo,
                 "nama_dokter" => $registration->dokter->ParamedicName,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
                 "daftar_by" => '-',
@@ -170,10 +172,12 @@ class RegistrationRajalController extends Controller
                 'RegistrationDateTime' => $registration->RegistrationDateTime,
                 'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
                 'ss_encounter_id' => $registration->EncounterIHS,
+                'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
                 // 'diagnosas' => $registration
                 'diagnosas' => $registration->getRmeDiagnosa($registration->RegistrationNo),
             ];
         }
+        $datas = collect($datas)->where('DischargeDateTime', '!=', null);
         return response()->json([
             'status' => true,
             'message' => 'success',
@@ -218,11 +222,13 @@ class RegistrationRajalController extends Controller
             "no_mr" => $registration->MedicalNo,
             "status_rawat" => $statusRawat,
             "kode_dokter" => $registration->dokter->ParamedicCode,
+            "nik_dokter" => $registration->dokter->TaxRegistrantNo,
             "nama_dokter" => $registration->dokter->ParamedicName,
             "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
             "daftar_by" => '-',
             "created_by" => "-",
-            'ss_encounter_id' => '-',
+            'ss_encounter_id' => $registration->EncounterIHS,
+            'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
             'RegistrationDateTime' => $registration->RegistrationDateTime,
             'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
             'diagnosas' => $registration->rmeDiagnosa,

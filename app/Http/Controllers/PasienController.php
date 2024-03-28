@@ -36,6 +36,7 @@ class PasienController extends Controller
             $datas[] = [
                 "id" => "-",
                 'ihs' => $pasien->PatientIHS,
+                'ihs_sanbox' => $pasien->PatientIHSsanbox,
                 "no_mr" => strval($pasien->MedicalNo),
                 "nama_pasien" => $pasien->PatientName,
                 "no_bpjs" => $pasien->BpjsCardNo,
@@ -61,6 +62,7 @@ class PasienController extends Controller
         $datas = [
             "id" => "-",
             'ihs' => $pasien->PatientIHS,
+            'ihs_sanbox' => $pasien->PatientIHSsanbox,
             "no_mr" => strval($pasien->MedicalNo),
             "nama_pasien" => $pasien->PatientName,
             "no_bpjs" => $pasien->BpjsCardNo,
@@ -80,12 +82,18 @@ class PasienController extends Controller
         try {
             $pasien = SphairaPatient::where('MedicalNo', 'like', '%' . $norm . '%')->first();
 
-            $pasien->PatientIHS = $request->kodeIHS;
+            if($request->isProd == true) {
+                $pasien->PatientIHS = $request->kodeIHS;
+            }else{
+                $pasien->PatientIHSsanbox = $request->kodeIHS;
+            }
+
             $pasien->save();
 
             $data = [
                 "id" => "-",
                 'ihs' => $pasien->PatientIHS,
+                'ihs_sanbox' => $pasien->PatientIHSsanbox,
                 "no_mr" => strval($pasien->MedicalNo),
                 "nama_pasien" => $pasien->PatientName,
                 "no_bpjs" => $pasien->BpjsCardNo,

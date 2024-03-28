@@ -7,14 +7,24 @@ use Illuminate\Http\Request;
 
 class DokterController extends Controller
 {
-    public function get()
+    public function get(Request $req)
     {
-        $paramedics = SphairaParamedic::where('isDeleted', 0)->where('IsActive', 1)->where('GCParamedicType', 'X0055^001')->where('ParamedicName', '!=', 'QPRO')->get();
+        $data_paramedics = SphairaParamedic::where('isDeleted', 0)->where('IsActive', 1)->where('GCParamedicType', 'X0055^001')->where('ParamedicName', '!=', 'QPRO');
+
+        if ($req->ihs_null) {
+            $data_paramedics->where('ParamedicIHS', null);
+        }
+        if($req->ihs_sanbox_null) {
+            $data_paramedics->where('ParamedicIHSsanbox', null);
+        }
+
+        $paramedics = $data_paramedics->get();
         $datas = [];
         foreach ($paramedics as $paramedic) {
             $datas[] = [
                 'id' => $paramedic->ParamedicID,
                 'ihs' => $paramedic->ParamedicIHS,
+                'ihs_sanbox' => $paramedic->ParamedicIHSsanbox,
                 'kode_dokter' => $paramedic->ParamedicCode,
                 'jenis_profesi' => $paramedic->sysGeneralCode->GeneralCodeName1,
                 'spesialis' => $paramedic->Specialty->SpecialtyName1,
@@ -51,6 +61,7 @@ class DokterController extends Controller
         $data = [
             'id' => $paramedic->ParamedicID,
             'ihs' => $paramedic->ParamedicIHS,
+            'ihs_sanbox' => $paramedic->ParamedicIHSsanbox,
             'kode_dokter' => $paramedic->ParamedicCode,
             'jenis_profesi' => $paramedic->sysGeneralCode->GeneralCodeName1,
             'spesialis' => $paramedic->Specialty->SpecialtyName1,
@@ -84,12 +95,18 @@ class DokterController extends Controller
         try {
             $paramedic = SphairaParamedic::where('ParamedicCode', $kodeDokter)->first();
 
-            $paramedic->ParamedicIHS = $request->kodeIHS;
+            if ($request->isProd == true) {
+                $paramedic->ParamedicIHS = $request->kodeIHS;
+            } else {
+                $paramedic->ParamedicIHSsanbox = $request->kodeIHS;
+            }
+
             $paramedic->save();
 
             $data = [
                 'id' => $paramedic->ParamedicID,
                 'ihs' => $paramedic->ParamedicIHS,
+                'ihs_sanbox' => $paramedic->ParamedicIHSsanbox,
                 'kode_dokter' => $paramedic->ParamedicCode,
                 'jenis_profesi' => $paramedic->sysGeneralCode->GeneralCodeName1,
                 'spesialis' => $paramedic->Specialty->SpecialtyName1,
@@ -124,4 +141,5 @@ class DokterController extends Controller
             ]);
         }
     }
+
 }
