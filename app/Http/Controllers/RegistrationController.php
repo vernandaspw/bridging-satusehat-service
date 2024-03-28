@@ -153,7 +153,12 @@ class RegistrationController extends Controller
         try {
             $registration = SphairaRegistration::where('RegistrationNo', $noreg)->first();
 
-            $registration->EncounterIHS = $encounter_id;
+            if($request->isProd == true) {
+                $registration->EncounterIHS = $encounter_id;
+            }else{
+                $registration->EncounterIHSsanbox = $encounter_id;
+            }
+
             $registration->save();
 
             if (strpos($registration->RegistrationNo, 'RI') !== false) {
