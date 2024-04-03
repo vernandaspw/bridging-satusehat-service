@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Registration;
 use App\Http\Controllers\Controller;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RegistrationRajalController extends Controller
@@ -99,6 +100,70 @@ class RegistrationRajalController extends Controller
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
                 "kode_dokter" => $registration->dokter->ParamedicCode,
+                "nama_dokter" => $registration->dokter->ParamedicName,
+                "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
+                "daftar_by" => '-',
+                "created_by" => "-",
+                'RegistrationDateTime' => $registration->RegistrationDateTime,
+                'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
+                'ss_encounter_id' => $registration->EncounterIHS,
+                'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
+                'diagnosas' => $registration->getRmeDiagnosa($registration->RegistrationNo),
+            ];
+        }
+
+        $datas = collect($datas)->where('DischargeDateTime', '!=', null);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'success',
+            'data' => $datas,
+        ]);
+    }
+
+    public function getlastday(Request $request)
+    {
+        $jml_hari = $request->hari ? $request->hari : 0;
+        $tanggal = $request->tanggal ? $request->tanggal : Carbon::today()->toDateString();
+        $daysAgo = Carbon::parse($tanggal)->subDays($jml_hari)->startOfDay()->toDateString();
+
+        $registrationData = SphairaRegistration::query();
+        $registrationData->where('isDeleted', 0);
+        $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
+
+        if ($request->isProd == true) {
+            $registrationData->where('EncounterIHS', null);
+        } else {
+            $registrationData->where('EncounterIHSsanbox', null);
+        }
+
+        $registrationData->whereDate('RegistrationDateTime', '>=', $daysAgo);
+        $registrationData->whereDate('RegistrationDateTime', '<=', $tanggal);
+
+        $registrationData->orderBy('MedicalNo', 'desc')->orderBy('RegistrationDateTime', 'desc');
+
+        $registrations = $registrationData->get();
+
+        $datas = [];
+        foreach ($registrations as $registration) {
+            if (strpos($registration->RegistrationNo, 'RJ') !== false) {
+                $statusRawat = 'RAWAT JALAN';
+            } else {
+                $statusRawat = '-';
+            }
+            $datas[] = [
+                "no_registrasi" => $registration->RegistrationNo,
+                'ServiceUnitID' => $registration->ServiceUnitID,
+                'RoomID' => $registration->RoomID,
+                'RoomCode' => $registration->service_room->RoomCode,
+                'RoomName' => $registration->service_room->RoomName,
+                "nama_pasien" => $registration->pasien->PatientName,
+                "DateOfBirth" => $registration->pasien->DateOfBirth,
+                "nik" => $registration->pasien->SSN,
+                "no_mr" => $registration->MedicalNo,
+                "status_rawat" => $statusRawat,
+                "kode_dokter" => $registration->dokter->ParamedicCode,
+                "nik_dokter" => $registration->dokter->TaxRegistrantNo,
                 "nama_dokter" => $registration->dokter->ParamedicName,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
                 "daftar_by" => '-',

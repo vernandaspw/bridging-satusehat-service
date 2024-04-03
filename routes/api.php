@@ -42,6 +42,7 @@ Route::middleware(['token'])->group(function () {
 
 
     Route::get('registration/rajal', [RegistrationRajalController::class,'get']);
+    Route::get('registration/rajal/lastday', [RegistrationRajalController::class,'getlastday']);
     Route::get('registration/rajal/date', [RegistrationRajalController::class,'getDate']);
     Route::get('registration/rajal/detail', [RegistrationRajalController::class,'getByNoreg']);
 
