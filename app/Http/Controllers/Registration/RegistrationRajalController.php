@@ -204,11 +204,23 @@ class RegistrationRajalController extends Controller
         $cekEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
         $encounter = $cekEncounter->whereNotNull('EncounterIHS')->count();
 
+        $cekEncounterSanbox = SphairaRegistration::query();
+        $cekEncounterSanbox->where('isDeleted', 0);
+        $cekEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
+        $cekEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        $encounter_sanbox = $cekEncounterSanbox->whereNotNull('EncounterIHSsanbox')->count();
+
         $cekNotEncounter = SphairaRegistration::query();
         $cekNotEncounter->where('isDeleted', 0);
         $cekNotEncounter->where('RegistrationNo', 'LIKE', '%RJ%');
         $cekNotEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
         $not_encounter = $cekNotEncounter->where('EncounterIHS', null)->count();
+
+        $cekNotEncounterSanbox = SphairaRegistration::query();
+        $cekNotEncounterSanbox->where('isDeleted', 0);
+        $cekNotEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
+        $cekNotEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        $not_encounter_sanbox = $cekNotEncounterSanbox->where('EncounterIHSsanbox', null)->count();
 
         $datas = [];
         foreach ($registrations->items() as $registration) {
@@ -249,6 +261,8 @@ class RegistrationRajalController extends Controller
             'data' => [
                 'encounter' => $encounter,
                 'not_encounter' => $not_encounter,
+                'encounter_sanbox' => $encounter_sanbox,
+                'not_encounter_sanbox' => $not_encounter_sanbox,
                 'items' => $datas,
                 'current_page' => $registrations->currentPage(),
                 'first_page_url' => $registrations->url(1),
