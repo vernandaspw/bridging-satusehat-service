@@ -142,8 +142,8 @@ class RegistrationRajalController extends Controller
 
         $registrationData->orderBy('MedicalNo', 'desc')->orderBy('RegistrationDateTime', 'desc');
 
-        try {
-            $registrations = $registrationData->get();
+        // try {
+        $registrations = $registrationData->get();
 
         $datas = [];
         foreach ($registrations as $registration) {
@@ -164,9 +164,9 @@ class RegistrationRajalController extends Controller
                 "nik" => $registration->pasien->SSN,
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
-                "kode_dokter" => $registration->dokter->ParamedicCode,
-                "nik_dokter" => $registration->dokter->TaxRegistrantNo,
-                "nama_dokter" => $registration->dokter->ParamedicName,
+                "kode_dokter" => $registration->dokter ? $registration->dokter->ParamedicCode : null,
+                "nik_dokter" => $registration->dokter->TaxRegistrantNo ? $registration->dokter->TaxRegistrantNo : null,
+                "nama_dokter" => $registration->dokter->ParamedicName ? $registration->dokter->ParamedicName : null,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
                 "daftar_by" => '-',
                 "created_by" => "-",
@@ -185,9 +185,9 @@ class RegistrationRajalController extends Controller
             'message' => 'success',
             'data' => $datas,
         ]);
-        } catch (\Throwable $e) {
-            dd($e);
-        }
+        // } catch (\Throwable $e) {
+        //     dd($e);
+        // }
     }
 
     public function get(Request $request)
