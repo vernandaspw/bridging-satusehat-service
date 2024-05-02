@@ -151,7 +151,7 @@ class RegistrationRajalController extends Controller
             } else {
                 $statusRawat = '-';
             }
-            dd($registration);
+            // dd($registration);
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
