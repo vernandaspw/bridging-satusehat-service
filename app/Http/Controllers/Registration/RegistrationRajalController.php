@@ -142,7 +142,8 @@ class RegistrationRajalController extends Controller
 
         $registrationData->orderBy('MedicalNo', 'desc')->orderBy('RegistrationDateTime', 'desc');
 
-        $registrations = $registrationData->get();
+        try {
+            $registrations = $registrationData->get();
 
         $datas = [];
         foreach ($registrations as $registration) {
@@ -151,7 +152,7 @@ class RegistrationRajalController extends Controller
             } else {
                 $statusRawat = '-';
             }
-            dd($registration->dokter);
+            // dd($registration->dokter);
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
@@ -184,6 +185,9 @@ class RegistrationRajalController extends Controller
             'message' => 'success',
             'data' => $datas,
         ]);
+        } catch (\Throwable $e) {
+            dd($e);
+        }
     }
 
     public function get(Request $request)
