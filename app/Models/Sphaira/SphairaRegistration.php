@@ -4,6 +4,7 @@ namespace App\Models\Sphaira;
 
 use App\Models\Rme\RmePasienDiagnosa;
 use App\Models\Rme\RmeRegistration;
+use App\Models\Satusehat\LogEncounter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,6 +60,15 @@ class SphairaRegistration extends Model
     public function rmeDiagnosa()
     {
         return $this->hasMany(RmePasienDiagnosa::class, 'pdiag_reg');
+    }
+
+    function getLogEncounter($noreg) {
+        $log = LogEncounter::where('noreg', $noreg)->first();
+        if ($log) {
+            return $log;
+        }else{
+            return [];
+        }
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\Controller;
+use App\Models\Satusehat\LogEncounter;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
 use Carbon\Carbon;
@@ -192,7 +193,12 @@ class RegistrationRajalController extends Controller
 
     public function get(Request $request)
     {
-
+        // try {
+        //     $log = LogEncounter::where('noreg', 'QREG/RJ/202405030104')->first();
+        //     return response()->json($log);
+        // } catch (\Throwable $e) {
+        //     return response()->json($e);
+        // }
         $registrationData = SphairaRegistration::query();
         $registrationData->where('isDeleted', 0);
         $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
@@ -234,6 +240,8 @@ class RegistrationRajalController extends Controller
             } else {
                 $statusRawat = '-';
             }
+            $log = LogEncounter::with('user')->where('noreg', $registration->RegistrationNo)->first();
+            // $log = LogEncounter::with('user')->where('noreg', 'QREG/RJ/202405030104')->first();
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
@@ -257,6 +265,8 @@ class RegistrationRajalController extends Controller
                 'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
                 // 'diagnosas' => $registration
                 'diagnosas' => $registration->getRmeDiagnosa($registration->RegistrationNo),
+                // 'log' => $registration->getLogEncounter($registration->RegistrationNo)
+                'log' => $log ? $log : null,
             ];
         }
         $datas = collect($datas)->where('DischargeDateTime', '!=', null);
