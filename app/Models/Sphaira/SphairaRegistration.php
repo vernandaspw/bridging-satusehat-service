@@ -47,6 +47,13 @@ class SphairaRegistration extends Model
         return null;
     }
 
+    public function rmeRegistration()
+    {
+        // return $this->belongsTo(RmeRegistration::class, 'RegistrationNo', 'reg_no');
+        return $this->belongsTo(RmeRegistration::class, 'RegistrationNo', 'reg_no');
+        //  return $this->hasMany(RmeRegistration::class, 'reg_no', 'RegistrationNo');
+    }
+
     public function getRmeDiagnosa($noreg)
     {
         // return $this->hasMany(RmePasienDiagnosa::class, 'pdiag_reg');

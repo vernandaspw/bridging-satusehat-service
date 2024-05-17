@@ -199,14 +199,32 @@ class RegistrationRajalController extends Controller
         // } catch (\Throwable $e) {
         //     return response()->json($e);
         // }
-        $registrationData = SphairaRegistration::query();
+
+        // $registrationData  = SphairaRegistration::query();
+        //     // ->whereRelation('rmeRegistration', 'reg_discharge_tanggal', null)
+        //     $registrationData->where('isDeleted', 0);
+        //     $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
+        //     $registrationData->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        //     $registrationData->get();
+        //     return response()->json($registrationData);
+
+        $registrationData = SphairaRegistration::query()->with('rmeRegistration');
+        // $registrationData->whereRelation('rmeRegistration', function ($query) {
+        //     $query->where('reg_discharge_tanggal', '!=', null);
+        // });
+        // $registrationData->whereRelation('rmeRegistration', 'reg_discharge_tanggal', '!=', null);
+
         $registrationData->where('isDeleted', 0);
         $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
         $registrationData->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
 
         $registrationData->orderBy('MedicalNo', 'desc')->orderBy('RegistrationDateTime', 'desc');
 
+        // $registrations = $registrationData->get();
         $registrations = $registrationData->paginate(10);
+        // return response()->json($registrations);
+
+
         // return response()->json($registrations);
         // cek JUMLAH ENCOUNTER
         $cekEncounter = SphairaRegistration::query();
@@ -269,15 +287,19 @@ class RegistrationRajalController extends Controller
                 'log' => $log ? $log : null,
             ];
         }
+        // $datas = collect($datas);
+
         $datas = collect($datas)->where('DischargeDateTime', '!=', null);
+        // $encounter = collect($datas)->where('ss_encounter_id', '!=', null)->count();
+
         return response()->json([
             'status' => true,
             'message' => 'success',
             'data' => [
-                'encounter' => $encounter,
-                'not_encounter' => $not_encounter,
-                'encounter_sanbox' => $encounter_sanbox,
-                'not_encounter_sanbox' => $not_encounter_sanbox,
+                // 'encounter' => $encounter,
+                // 'not_encounter' => $not_encounter,
+                // 'encounter_sanbox' => $encounter_sanbox,
+                // 'not_encounter_sanbox' => $not_encounter_sanbox,
                 'items' => $datas,
                 'current_page' => $registrations->currentPage(),
                 'first_page_url' => $registrations->url(1),
