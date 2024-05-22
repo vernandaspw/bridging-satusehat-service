@@ -7,6 +7,9 @@ use App\Models\Satusehat\LogEncounter;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
 use Carbon\Carbon;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Http\Request;
 
 class RegistrationRajalController extends Controller
@@ -191,6 +194,54 @@ class RegistrationRajalController extends Controller
         // }
     }
 
+    public function getCount(Request $request)
+    {
+        $currentYear = $request->year ? $request->year : date('Y');
+        $currentMonth = $request->month ? $request->month : date('m');
+
+        $startDate = new DateTime("$currentYear-$currentMonth-01");
+
+        $numberOfDays = $startDate->format('t');
+
+        $datePeriod = new DatePeriod($startDate, new DateInterval('P1D'), $numberOfDays - 1);
+        foreach ($datePeriod as $date) {
+            $reg = SphairaRegistration::query();
+            $reg->where('isDeleted', 0);
+            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+            $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
+            $countNoIHS = $reg->where('EncounterIHS', null)->count();
+
+            $reg = SphairaRegistration::query();
+            $reg->where('isDeleted', 0);
+            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+            $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
+            $countIHS = $reg->where('EncounterIHS', '!=', null)->count();
+
+            $reg = SphairaRegistration::query();
+            $reg->where('isDeleted', 0);
+            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+            $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
+            $countTotal = $reg->count();
+
+            $data[] = [
+                'tanggal' => $date->format('Y-m-d'),
+                'countIHS' => $countIHS,
+                'countNoIHS' => $countNoIHS,
+                'countTotal' => $countTotal,
+            ];
+        }
+
+        return response()->json(
+            [
+                'status' => true,
+                'message' => 'success',
+                'data' =>
+                    $data,
+            ]
+        );
+
+    }
+
     public function get(Request $request)
     {
         // try {
@@ -223,7 +274,6 @@ class RegistrationRajalController extends Controller
         // $registrations = $registrationData->get();
         $registrations = $registrationData->paginate(10);
         // return response()->json($registrations);
-
 
         // return response()->json($registrations);
         // cek JUMLAH ENCOUNTER
