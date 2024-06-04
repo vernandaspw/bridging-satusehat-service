@@ -207,19 +207,19 @@ class RegistrationRajalController extends Controller
         foreach ($datePeriod as $date) {
             $reg = SphairaRegistration::query();
             $reg->where('isDeleted', 0);
-            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+            $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
             $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
             $countNoIHS = $reg->where('EncounterIHS', null)->count();
 
             $reg = SphairaRegistration::query();
             $reg->where('isDeleted', 0);
-            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+             $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
             $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
             $countIHS = $reg->where('EncounterIHS', '!=', null)->count();
 
             $reg = SphairaRegistration::query();
             $reg->where('isDeleted', 0);
-            $reg->where('RegistrationNo', 'LIKE', '%RJ%');
+             $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
             $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
             $countTotal = $reg->count();
 
