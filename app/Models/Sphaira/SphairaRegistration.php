@@ -4,6 +4,7 @@ namespace App\Models\Sphaira;
 
 use App\Models\Rme\RmePasienDiagnosa;
 use App\Models\Rme\RmeRegistration;
+use App\Models\Satusehat\Location;
 use App\Models\Satusehat\LogEncounter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,16 @@ class SphairaRegistration extends Model
         return $this->belongsTo(SphairaBusinessPartner::class, 'BusinessPartnerID', 'BusinessPartnerID');
     }
 
+    public function location()
+    {
+        return $this->belongsTo(Location::class,'ServiceUnitID','ServiceUnitID');
+    }
+
+    public function diagnosa()
+    {
+        return $this->hasMany(SphairaDiagnosa::class,'RegistrationNo');
+    }
+
     public function getRmeDischargeDateTime($noreg)
     {
         $data = RmeRegistration::where('reg_no', $noreg)->first();
@@ -64,6 +75,8 @@ class SphairaRegistration extends Model
             return [];
         }
     }
+
+
     public function rmeDiagnosa()
     {
         return $this->hasMany(RmePasienDiagnosa::class, 'pdiag_reg');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Satusehat\LogEncounter;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
@@ -75,9 +76,10 @@ class RegistrationRajalController extends Controller
 
     public function getDate(Request $request)
     {
+        
         $registrationData = SphairaRegistration::query();
         $registrationData->where('isDeleted', 0);
-        $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
+        $registrationData->where(DB::raw('SUBSTRING(RegistrationNo, 6, 2)'), '=', 'RJ');
         $registrationData->where('EncounterIHS', null);
         $registrationData->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
 
@@ -103,8 +105,8 @@ class RegistrationRajalController extends Controller
                 "nik" => $registration->pasien->SSN,
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
-                "kode_dokter" => $registration->dokter->ParamedicCode,
-                "nama_dokter" => $registration->dokter->ParamedicName,
+                "kode_dokter" => $registration->dokter ? $registration->dokter->ParamedicCode : null,
+                "nama_dokter" => $registration->dokter ? $registration->dokter->ParamedicName : null,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
                 "daftar_by" => '-',
                 "created_by" => "-",
@@ -133,7 +135,7 @@ class RegistrationRajalController extends Controller
 
         $registrationData = SphairaRegistration::query();
         $registrationData->where('isDeleted', 0);
-        $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
+        $registrationData->where(DB::raw('SUBSTRING(RegistrationNo, 6, 2)'), '=', 'RJ');
 
         if ($request->isProd == true) {
             $registrationData->where('EncounterIHS', null);
@@ -266,7 +268,7 @@ class RegistrationRajalController extends Controller
         // $registrationData->whereRelation('rmeRegistration', 'reg_discharge_tanggal', '!=', null);
 
         $registrationData->where('isDeleted', 0);
-        $registrationData->where('RegistrationNo', 'LIKE', '%RJ%');
+        $registrationData->where(DB::raw('SUBSTRING(RegistrationNo, 6, 2)'), '=', 'RJ');
         $registrationData->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
 
         $registrationData->orderBy('MedicalNo', 'desc')->orderBy('RegistrationDateTime', 'desc');
@@ -277,29 +279,29 @@ class RegistrationRajalController extends Controller
 
         // return response()->json($registrations);
         // cek JUMLAH ENCOUNTER
-        $cekEncounter = SphairaRegistration::query();
-        $cekEncounter->where('isDeleted', 0);
-        $cekEncounter->where('RegistrationNo', 'LIKE', '%RJ%');
-        $cekEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
-        $encounter = $cekEncounter->whereNotNull('EncounterIHS')->count();
+        // $cekEncounter = SphairaRegistration::query();
+        // $cekEncounter->where('isDeleted', 0);
+        // $cekEncounter->where('RegistrationNo', 'LIKE', '%RJ%');
+        // $cekEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        // $encounter = $cekEncounter->whereNotNull('EncounterIHS')->count();
 
-        $cekEncounterSanbox = SphairaRegistration::query();
-        $cekEncounterSanbox->where('isDeleted', 0);
-        $cekEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
-        $cekEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
-        $encounter_sanbox = $cekEncounterSanbox->whereNotNull('EncounterIHSsanbox')->count();
+        // $cekEncounterSanbox = SphairaRegistration::query();
+        // $cekEncounterSanbox->where('isDeleted', 0);
+        // $cekEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
+        // $cekEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        // $encounter_sanbox = $cekEncounterSanbox->whereNotNull('EncounterIHSsanbox')->count();
 
-        $cekNotEncounter = SphairaRegistration::query();
-        $cekNotEncounter->where('isDeleted', 0);
-        $cekNotEncounter->where('RegistrationNo', 'LIKE', '%RJ%');
-        $cekNotEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
-        $not_encounter = $cekNotEncounter->where('EncounterIHS', null)->count();
+        // $cekNotEncounter = SphairaRegistration::query();
+        // $cekNotEncounter->where('isDeleted', 0);
+        // $cekNotEncounter->where('RegistrationNo', 'LIKE', '%RJ%');
+        // $cekNotEncounter->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        // $not_encounter = $cekNotEncounter->where('EncounterIHS', null)->count();
 
-        $cekNotEncounterSanbox = SphairaRegistration::query();
-        $cekNotEncounterSanbox->where('isDeleted', 0);
-        $cekNotEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
-        $cekNotEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
-        $not_encounter_sanbox = $cekNotEncounterSanbox->where('EncounterIHSsanbox', null)->count();
+        // $cekNotEncounterSanbox = SphairaRegistration::query();
+        // $cekNotEncounterSanbox->where('isDeleted', 0);
+        // $cekNotEncounterSanbox->where('RegistrationNo', 'LIKE', '%RJ%');
+        // $cekNotEncounterSanbox->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
+        // $not_encounter_sanbox = $cekNotEncounterSanbox->where('EncounterIHSsanbox', null)->count();
 
         $datas = [];
         foreach ($registrations->items() as $registration) {
@@ -321,9 +323,9 @@ class RegistrationRajalController extends Controller
                 "nik" => $registration->pasien->SSN,
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
-                "kode_dokter" => $registration->dokter->ParamedicCode,
-                "nik_dokter" => $registration->dokter->TaxRegistrantNo,
-                "nama_dokter" => $registration->dokter->ParamedicName,
+                "kode_dokter" => $registration->dokter ? $registration->dokter->ParamedicCode : null,
+                "nik_dokter" => $registration->dokter ? ($registration->dokter->TaxRegistrantNo ? $registration->dokter->TaxRegistrantNo : null) : null,
+                "nama_dokter" => $registration->dokter ? ($registration->dokter->ParamedicName ? $registration->dokter->ParamedicName : null) : null,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
                 "daftar_by" => '-',
                 "created_by" => "-",
