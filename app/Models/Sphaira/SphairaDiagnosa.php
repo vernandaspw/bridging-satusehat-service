@@ -12,4 +12,6 @@ class SphairaDiagnosa extends Model
     protected $connection = 'sqlsrv_Sphaira';
     protected $table = 'EpisodeDiagnosis';
     protected $guarded = ['RegistrationNo'];
+
+    
 }

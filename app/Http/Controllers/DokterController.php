@@ -95,11 +95,13 @@ class DokterController extends Controller
         try {
             $paramedic = SphairaParamedic::where('ParamedicCode', $kodeDokter)->first();
 
-            if ($request->isProd == true) {
+            if($request->isProd == 'true' || $request->isProd == '1' || $request->isProd == true) {
                 $paramedic->ParamedicIHS = $request->kodeIHS;
             } else {
                 $paramedic->ParamedicIHSsanbox = $request->kodeIHS;
             }
+
+            // dd($paramedic);
 
             $paramedic->save();
 

@@ -24,9 +24,9 @@ class RegistrationIgdController extends Controller
         $registrations      = $registrationData->paginate(10);
 
         // return response()->json($registrations);
-       
+
         // return $request->tanggal;
-        
+
         $datas = [];
         foreach ($registrations->items() as $registration) {
             $statusRawat = 'RAWAT DARURAT';
@@ -89,8 +89,6 @@ class RegistrationIgdController extends Controller
                 'total' => $registrations->total(),
             ],
         ]);
-
-        
     }
 
     public function getlastday(Request $request)
@@ -118,22 +116,41 @@ class RegistrationIgdController extends Controller
         // try {
         $registrations = $registrationData->get();
 
+       
+
         $datas = [];
         foreach ($registrations as $registration) {
+            $ihs_dokter ='';
+            if ($request->isProd == true) {
+                $ihs_dokter = $registration->dokter->ParamedicIHS; 
+                $ihs_pasien = $registration->pasien->PatientIHS;
+            } else {
+                $ihs_dokter = $registration->dokter->ParamedicIHSsanbox; 
+                $ihs_pasien = $registration->pasien->PatientIHSsanbox;
+            }
+
             $statusRawat = 'RAWAT DARURAT';
             // dd($registration->dokter);
+            $diagnosas = [];
+            
+            foreach ($registration->diagnosa as $diag) {
+                $diagnosas[] = [
+                    'pdiag_diagnosa' => $diag->DiagnosisCode
+                ];
+            }
+           
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
                 'location_ihs' => $registration->location->location_id,
-                "ihs_pasien" => $registration->pasien->PatientIHS,
+                "ihs_pasien" => $ihs_pasien,
                 "nama_pasien" => $registration->pasien->PatientName,
                 "DateOfBirth" => $registration->pasien->DateOfBirth,
                 "nik" => $registration->pasien->SSN,
                 "no_mr" => $registration->MedicalNo,
                 "status_rawat" => $statusRawat,
                 "kode_dokter" => $registration->dokter ? $registration->dokter->ParamedicCode : null,
-                "ihs_dokter" => $registration->dokter ? ($registration->dokter->ParamedicIHS ? $registration->dokter->ParamedicIHS : null) : null,
+                "ihs_dokter" => $ihs_dokter,
                 "nik_dokter" => $registration->dokter ? ($registration->dokter->TaxRegistrantNo ? $registration->dokter->TaxRegistrantNo : null) : null,
                 "nama_dokter" => $registration->dokter ? ($registration->dokter->ParamedicName ? $registration->dokter->ParamedicName : null) : null,
                 "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
@@ -143,7 +160,7 @@ class RegistrationIgdController extends Controller
                 'DischargeDateTime' => $registration->DischargeDateTime,
                 'ss_encounter_id' => $registration->EncounterIHS,
                 'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
-                'diagnosas' => $registration->diagnosa,
+                'diagnosas' => $diagnosas,
             ];
         }
 

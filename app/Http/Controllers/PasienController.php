@@ -80,9 +80,11 @@ class PasienController extends Controller
     public function updateIHSByNorm(Request $request, $norm)
     {
         try {
-            $pasien = SphairaPatient::where('MedicalNo', 'like', '%' . $norm . '%')->first();
-
-            if($request->isProd == true) {
+            $pasien = SphairaPatient::where('MedicalNo',$norm)->first();
+            // dd($request->isProd);
+            // return response()->json($request);
+            
+            if($request->isProd == 'true' || $request->isProd == '1' || $request->isProd == true) {
                 $pasien->PatientIHS = $request->kodeIHS;
             }else{
                 $pasien->PatientIHSsanbox = $request->kodeIHS;
