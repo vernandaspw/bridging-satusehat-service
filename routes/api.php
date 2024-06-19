@@ -5,6 +5,7 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\Registration\RegistrationRajalController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Registration\RegistrationIgdController;
+use App\Http\Controllers\Registration\RegistrationRanapController;
 use App\Http\Controllers\Satusehat\SsPasienController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,9 +51,9 @@ Route::middleware(['token'])->group(function () {
 
     // Route::get('registration/rajal/dokter', [RegistrationRajalController::class,'getByDokter']);
 
-    Route::get('registration/ranap', [RegistrationController::class,'get']);
-    Route::get('registration/ranap/detail', [RegistrationController::class,'getByNoreg']);
-    Route::get('registration/ranap/dokter', [RegistrationController::class,'getByDokter']);
+    Route::get('registration/ranap', [RegistrationRanapController::class,'get']);
+    Route::get('registration/ranap/detail', [RegistrationRanapController::class,'getByNoreg']);
+    Route::get('registration/ranap/dokter', [RegistrationRanapController::class,'getByDokter']);
 
     Route::get('registration/igd', [RegistrationIgdController::class,'get']);
     Route::get('registration/igd/lastday', [RegistrationIgdController::class,'getlastday']);

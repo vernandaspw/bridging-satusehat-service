@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sphaira\SphairaDiagnosa;
 use App\Models\Sphaira\SphairaRegistration;
 use App\Models\Satusehat\LogEncounter;
 use Illuminate\Http\Request;
@@ -88,6 +87,49 @@ class RegistrationIgdController extends Controller
                 'to' => $registrations->lastItem(),
                 'total' => $registrations->total(),
             ],
+        ]);
+    }
+
+    public function getByNoreg(Request $request)
+    {
+        $noreg = $request->noreg;
+        $registration = SphairaRegistration::where('RegistrationNo', $noreg)->first();
+        $statusRawat = 'RAWAT DARURAT';
+
+        foreach ($registration->diagnosa as $diag) {
+            $diagnosas[] = [
+                'pdiag_diagnosa' => $diag->DiagnosisCode
+            ];
+        }
+
+
+        $datas = [
+            "no_registrasi" => $registration->RegistrationNo,
+            'ServiceUnitID' => $registration->ServiceUnitID,
+            'RoomID' => $registration->RoomID,
+            'RoomCode' => $registration->service_room->RoomCode,
+            'RoomName' => $registration->service_room->RoomName,
+            "nama_pasien" => $registration->pasien->PatientName,
+            "ihs_pasien" => $registration->pasien->SSN,
+            "nik" => $registration->pasien->SSN,
+            "no_mr" => $registration->MedicalNo,
+            "status_rawat" => $statusRawat,
+            "kode_dokter" => $registration->dokter->ParamedicCode,
+            "nik_dokter" => $registration->dokter->TaxRegistrantNo,
+            "nama_dokter" => $registration->dokter->ParamedicName,
+            "nama_rekanan" => $registration->bisnisPartner->BusinessPartnerName,
+            "daftar_by" => '-',
+            "created_by" => "-",
+            'ss_encounter_id' => $registration->EncounterIHS,
+            'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
+            'RegistrationDateTime' => $registration->RegistrationDateTime,
+            'DischargeDateTime' => $registration->DischargeDateTime,
+            'diagnosas' => $diagnosas,
+        ];
+        return response()->json([
+            'status' => true,
+            'message' => 'success',
+            'data' => $datas,
         ]);
     }
 
