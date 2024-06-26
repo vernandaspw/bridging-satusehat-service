@@ -12,6 +12,7 @@ class Patient extends Model
     protected $connection = 'mysql';
     protected $table = 'patients';
     protected $guarded = ['id'];
+    
     public function SphairaPatient()
     {
         return $this->belongsTo(SphairaPatient::class, 'MedicalNo', 'MedicalNo');

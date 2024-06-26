@@ -17,16 +17,27 @@ class PenunjangController extends Controller
 
     public function farmasi()
     {
-        $PenunjangData = SphairaPenunjang::query();
+        $PenunjangData = SphairaPenunjang::query()->with('Penunjang');
         $PenunjangData->where('isDeleted', 0);
         $PenunjangData->where('IsActive', 1);
-        $PenunjangData->where('GCItemType', 'X0001^02');
+        $PenunjangData->where('GCItemType', 'X0001^02');       
         $Penunjangs   = $PenunjangData->get();
+      
+        $datas = [];
+        foreach($Penunjangs as $penunjang){           
+            $datas[] = [
+                "ItemID" => $penunjang->ItemID,
+                'ItemCode' => $penunjang->ItemCode,
+                'ItemName1' => $penunjang->ItemName1,
+                'KodeStandar' => $penunjang->penunjang ? $penunjang->penunjang->KodeStandar : null
+            ];
+        }
+        
         return response()->json([
             'status' => true,
             'message' => 'success',
             'data' => [
-                'items' => $Penunjangs
+                'items' => $datas
             ],
         ]);
     }
@@ -39,11 +50,21 @@ class PenunjangController extends Controller
         $PenunjangData->where('GCItemType', 'X0001^04');
         $Penunjangs   = $PenunjangData->get();
         
+        $datas = [];
+        foreach($Penunjangs as $penunjang){           
+            $datas[] = [
+                "ItemID" => $penunjang->ItemID,
+                'ItemCode' => $penunjang->ItemCode,
+                'ItemName1' => $penunjang->ItemName1,
+                'KodeStandar' => $penunjang->penunjang ? $penunjang->penunjang->KodeStandar : null
+            ];
+        }
+        
         return response()->json([
             'status' => true,
             'message' => 'success',
             'data' => [
-                'items' => $Penunjangs
+                'items' => $datas
             ],
         ]);
     }
@@ -56,11 +77,21 @@ class PenunjangController extends Controller
         $PenunjangData->where('GCItemType', 'X0001^05');
         $Penunjangs   = $PenunjangData->get();
         
+        $datas = [];
+        foreach($Penunjangs as $penunjang){           
+            $datas[] = [
+                "ItemID" => $penunjang->ItemID,
+                'ItemCode' => $penunjang->ItemCode,
+                'ItemName1' => $penunjang->ItemName1,
+                'KodeStandar' => $penunjang->penunjang ? $penunjang->penunjang->KodeStandar : null
+            ];
+        }
+        
         return response()->json([
             'status' => true,
             'message' => 'success',
             'data' => [
-                'items' => $Penunjangs
+                'items' => $datas
             ],
         ]);
     }
