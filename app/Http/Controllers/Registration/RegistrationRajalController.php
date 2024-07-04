@@ -387,10 +387,14 @@ class RegistrationRajalController extends Controller
         }
         // preg_match('/^\d+$/', $string, $matches)[0]
         $nadi =  RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
-        $observationNadi = [
-            'value' => $nadi->asper_nadi,
-            'date' =>  $nadi->created_at,
-        ];
+        if($nadi){
+            $observationNadi = [
+                'value' => $nadi->asper_nadi,
+                'date' =>  $nadi->created_at,
+            ];
+        }else{
+            $observationNadi = null;
+        }
 
       
         $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
@@ -417,8 +421,8 @@ class RegistrationRajalController extends Controller
             'RegistrationDateTime' => $registration->RegistrationDateTime,
             'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
             'observationNadi' => $observationNadi,
-            'diagnosas' => $rmeDiagnosas,
-            'procedures' => $rmeProsedurs
+            'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
+            'procedures' => $rmeProsedurs ? $rmeProsedurs : null
         ];
         return response()->json([
             'status' => true,
