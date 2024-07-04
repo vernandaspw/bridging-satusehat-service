@@ -6,6 +6,7 @@ use App\Http\Controllers\Registration\RegistrationRajalController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Registration\RegistrationIgdController;
 use App\Http\Controllers\Registration\RegistrationRanapController;
+use App\Http\Controllers\Penunjang\PenunjangController;
 use App\Http\Controllers\Satusehat\SsPasienController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -60,5 +61,10 @@ Route::middleware(['token'])->group(function () {
 
     Route::get('registration/igd/detail', [RegistrationIgdController::class,'getByNoreg']);
     Route::get('registration/igd/dokter', [RegistrationIgdController::class,'getByDokter']);
+
+    //Penunjang
+    Route::get('penunjang/farmasi', [PenunjangController::class,'farmasi']);
+    Route::get('penunjang/laboratorium', [PenunjangController::class,'laboratorium']);
+    Route::get('penunjang/radiologi', [PenunjangController::class,'radiologi']);
 
 });
