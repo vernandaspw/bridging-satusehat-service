@@ -2,6 +2,7 @@
 
 namespace App\Models\Sphaira;
 
+use App\Models\Rme\RmeAsper;
 use App\Models\Rme\RmePasienDiagnosa;
 use App\Models\Rme\RmeRegistration;
 use App\Models\Satusehat\Location;
@@ -41,12 +42,12 @@ class SphairaRegistration extends Model
 
     public function location()
     {
-        return $this->belongsTo(Location::class,'ServiceUnitID','ServiceUnitID');
+        return $this->belongsTo(Location::class, 'ServiceUnitID', 'ServiceUnitID');
     }
 
     public function diagnosa()
     {
-        return $this->hasMany(SphairaDiagnosa::class,'RegistrationNo');
+        return $this->hasMany(SphairaDiagnosa::class, 'RegistrationNo');
     }
 
     public function getRmeDischargeDateTime($noreg)
@@ -76,17 +77,22 @@ class SphairaRegistration extends Model
         }
     }
 
-
     public function rmeDiagnosa()
     {
         return $this->hasMany(RmePasienDiagnosa::class, 'pdiag_reg');
     }
 
-    function getLogEncounter($noreg) {
+    public function rmeAsper()
+    {
+        return $this->belongsTo(RmeAsper::class, 'asper_reg' , 'reg_no');
+    }
+
+    public function getLogEncounter($noreg)
+    {
         $log = LogEncounter::where('noreg', $noreg)->first();
         if ($log) {
             return $log;
-        }else{
+        } else {
             return [];
         }
     }

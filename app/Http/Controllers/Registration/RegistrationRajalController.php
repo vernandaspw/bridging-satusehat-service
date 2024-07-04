@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rme\RmeAsper;
+use App\Models\Rme\RmePasienDiagnosa;
+use App\Models\Rme\RmeProsedur;
 use App\Models\Satusehat\LogEncounter;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
@@ -76,7 +79,7 @@ class RegistrationRajalController extends Controller
 
     public function getDate(Request $request)
     {
-        
+
         $registrationData = SphairaRegistration::query();
         $registrationData->where('isDeleted', 0);
         $registrationData->where(DB::raw('SUBSTRING(RegistrationNo, 6, 2)'), '=', 'RJ');
@@ -382,6 +385,17 @@ class RegistrationRajalController extends Controller
         } else {
             $statusRawat = 'lainnya';
         }
+        // preg_match('/^\d+$/', $string, $matches)[0]
+        $nadi =  RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
+        $observationNadi = [
+            'value' => $nadi->asper_nadi,
+            'date' =>  $nadi->created_at,
+        ];
+
+      
+        $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
+        $rmeProsedurs = RmeProsedur::where('pprosedur_reg', $registration->RegistrationNo)->where('pprosedur_deleted', 0)->get()->unique('pprosedur_prosedur');
+        
         $datas = [
             "no_registrasi" => $registration->RegistrationNo,
             'ServiceUnitID' => $registration->ServiceUnitID,
@@ -402,7 +416,9 @@ class RegistrationRajalController extends Controller
             'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
             'RegistrationDateTime' => $registration->RegistrationDateTime,
             'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
-            'diagnosas' => $registration->rmeDiagnosa,
+            'observationNadi' => $observationNadi,
+            'diagnosas' => $rmeDiagnosas,
+            'procedures' => $rmeProsedurs
         ];
         return response()->json([
             'status' => true,

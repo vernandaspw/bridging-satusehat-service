@@ -4,5 +4,5 @@ namespace App\Services\Satusehat;
 
 class SatusehatOrganizationService
 {
-
+    
 }
