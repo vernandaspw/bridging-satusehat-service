@@ -9,12 +9,12 @@ use App\Models\Rme\RmeProsedur;
 use App\Models\Satusehat\LogEncounter;
 use App\Models\Sphaira\SphairaParamedic;
 use App\Models\Sphaira\SphairaRegistration;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegistrationRajalController extends Controller
 {
@@ -97,6 +97,19 @@ class RegistrationRajalController extends Controller
             } else {
                 $statusRawat = '-';
             }
+            $nadi = RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
+            if ($nadi) {
+                $observationNadi = [
+                    'value' => $nadi->asper_nadi,
+                    'date' => $nadi->created_at,
+                ];
+            } else {
+                $observationNadi = null;
+            }
+
+            $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
+            $rmeProsedurs = RmeProsedur::where('pprosedur_reg', $registration->RegistrationNo)->where('pprosedur_deleted', 0)->get()->unique('pprosedur_prosedur');
+
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
@@ -117,7 +130,9 @@ class RegistrationRajalController extends Controller
                 'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
                 'ss_encounter_id' => $registration->EncounterIHS,
                 'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
-                'diagnosas' => $registration->getRmeDiagnosa($registration->RegistrationNo),
+                'observationNadi' => $observationNadi,
+                'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
+                'procedures' => $rmeProsedurs ? $rmeProsedurs : null,
             ];
         }
 
@@ -154,8 +169,6 @@ class RegistrationRajalController extends Controller
         // try {
         $registrations = $registrationData->get();
 
-        
-
         $datas = [];
         foreach ($registrations as $registration) {
             if (strpos($registration->RegistrationNo, 'RJ') !== false) {
@@ -164,21 +177,20 @@ class RegistrationRajalController extends Controller
                 $statusRawat = '-';
             }
             // dd($registration->dokter);
-            $nadi =  RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
-            if($nadi){
+
+            $nadi = RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
+            if ($nadi) {
                 $observationNadi = [
                     'value' => $nadi->asper_nadi,
-                    'date' =>  $nadi->created_at,
+                    'date' => $nadi->created_at,
                 ];
-            }else{
+            } else {
                 $observationNadi = null;
             }
-    
-          
+
             $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
             $rmeProsedurs = RmeProsedur::where('pprosedur_reg', $registration->RegistrationNo)->where('pprosedur_deleted', 0)->get()->unique('pprosedur_prosedur');
-        
-            
+
             $datas[] = [
                 "no_registrasi" => $registration->RegistrationNo,
                 'ServiceUnitID' => $registration->ServiceUnitID,
@@ -202,7 +214,7 @@ class RegistrationRajalController extends Controller
                 'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
                 'observationNadi' => $observationNadi,
                 'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
-                'procedures' => $rmeProsedurs ? $rmeProsedurs : null
+                'procedures' => $rmeProsedurs ? $rmeProsedurs : null,
             ];
         }
 
@@ -237,13 +249,13 @@ class RegistrationRajalController extends Controller
 
             $reg = SphairaRegistration::query();
             $reg->where('isDeleted', 0);
-             $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
+            $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
             $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
             $countIHS = $reg->where('EncounterIHS', '!=', null)->count();
 
             $reg = SphairaRegistration::query();
             $reg->where('isDeleted', 0);
-             $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
+            $reg->whereRaw('SUBSTRING(RegistrationNo, 6, 2) = ?', ['RJ']);
             $reg->whereDate('RegistrationDateTime', $date->format('Y-m-d'));
             $countTotal = $reg->count();
 
@@ -260,7 +272,7 @@ class RegistrationRajalController extends Controller
                 'status' => true,
                 'message' => 'success',
                 'data' =>
-                    $data,
+                $data,
             ]
         );
 
@@ -405,20 +417,19 @@ class RegistrationRajalController extends Controller
             $statusRawat = 'lainnya';
         }
         // preg_match('/^\d+$/', $string, $matches)[0]
-        $nadi =  RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
-        if($nadi){
+        $nadi = RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
+        if ($nadi) {
             $observationNadi = [
                 'value' => $nadi->asper_nadi,
-                'date' =>  $nadi->created_at,
+                'date' => $nadi->created_at,
             ];
-        }else{
+        } else {
             $observationNadi = null;
         }
 
-      
         $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
         $rmeProsedurs = RmeProsedur::where('pprosedur_reg', $registration->RegistrationNo)->where('pprosedur_deleted', 0)->get()->unique('pprosedur_prosedur');
-        
+
         $datas = [
             "no_registrasi" => $registration->RegistrationNo,
             'ServiceUnitID' => $registration->ServiceUnitID,
@@ -441,7 +452,7 @@ class RegistrationRajalController extends Controller
             'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
             'observationNadi' => $observationNadi,
             'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
-            'procedures' => $rmeProsedurs ? $rmeProsedurs : null
+            'procedures' => $rmeProsedurs ? $rmeProsedurs : null,
         ];
         return response()->json([
             'status' => true,
