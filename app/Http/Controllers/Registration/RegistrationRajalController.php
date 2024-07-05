@@ -131,8 +131,8 @@ class RegistrationRajalController extends Controller
                 'ss_encounter_id' => $registration->EncounterIHS,
                 'ss_encounter_id_sanbox' => $registration->EncounterIHSsanbox,
                 'observationNadi' => $observationNadi,
-                'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
-                'procedures' => $rmeProsedurs ? $rmeProsedurs : null,
+                'diagnosas' => isset($rmeDiagnosas) ? $rmeDiagnosas : null,
+                'procedures' => isset($rmeProsedurs) ? $rmeProsedurs : null,
             ];
         }
 
@@ -451,8 +451,8 @@ class RegistrationRajalController extends Controller
             'RegistrationDateTime' => $registration->RegistrationDateTime,
             'DischargeDateTime' => $registration->getRmeDischargeDateTime($registration->RegistrationNo),
             'observationNadi' => $observationNadi,
-            'diagnosas' => $rmeDiagnosas ? $rmeDiagnosas : null,
-            'procedures' => $rmeProsedurs ? $rmeProsedurs : null,
+            'diagnosas' => isset($rmeDiagnosas) ? $rmeDiagnosas : null,
+            'procedures' => isset($rmeProsedurs) ? $rmeProsedurs : null,
         ];
         return response()->json([
             'status' => true,
