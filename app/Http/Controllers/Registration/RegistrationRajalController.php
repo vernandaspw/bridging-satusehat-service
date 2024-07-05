@@ -185,7 +185,7 @@ class RegistrationRajalController extends Controller
                     'date' => $nadi->created_at,
                 ];
             } else {
-                $observationNadi = null;
+                $observationNadi = [];
             }
 
             $rmeDiagnosas = RmePasienDiagnosa::where('pdiag_reg', $registration->RegistrationNo)->where('pdiag_deleted', 0)->get()->unique('pdiag_diagnosa');
