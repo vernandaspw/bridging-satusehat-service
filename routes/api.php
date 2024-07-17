@@ -23,6 +23,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::post('registration/update/encounterid', [RegistrationController::class,'updateEncounterId']);
+Route::get('registration/rajal', [RegistrationRajalController::class,'get']);
+Route::get('registration/rajal/lastday', [RegistrationRajalController::class,'getlastday']);
+Route::get('registration/rajal/date', [RegistrationRajalController::class,'getDate']);
+Route::get('registration/rajal/detail', [RegistrationRajalController::class,'getByNoreg']);
+
 Route::middleware(['token'])->group(function () {
     // DOKTER SERVICE
     Route::get('dokter', [DokterController::class,'get']);
@@ -40,15 +46,11 @@ Route::middleware(['token'])->group(function () {
 
     Route::get('registration', [RegistrationController::class,'get']);
     Route::get('registration/detail', [RegistrationController::class,'getByNoreg']);
-    Route::post('registration/update/encounterid', [RegistrationController::class,'updateEncounterId']);
     Route::get('registration/dokter', [RegistrationController::class,'getByDokter']);
 
 
     Route::get('registration/rajal/count', [RegistrationRajalController::class,'getCount']);
-    Route::get('registration/rajal', [RegistrationRajalController::class,'get']);
-    Route::get('registration/rajal/lastday', [RegistrationRajalController::class,'getlastday']);
-    Route::get('registration/rajal/date', [RegistrationRajalController::class,'getDate']);
-    Route::get('registration/rajal/detail', [RegistrationRajalController::class,'getByNoreg']);
+
 
     // Route::get('registration/rajal/dokter', [RegistrationRajalController::class,'getByDokter']);
 
