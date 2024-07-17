@@ -300,7 +300,6 @@ class RegistrationRajalController extends Controller
         //     $query->where('reg_discharge_tanggal', '!=', null);
         // });
         // $registrationData->whereRelation('rmeRegistration', 'reg_discharge_tanggal', '!=', null);
-
         $registrationData->where('isDeleted', 0);
         $registrationData->where(DB::raw('SUBSTRING(RegistrationNo, 6, 2)'), '=', 'RJ');
         $registrationData->whereDate('RegistrationDateTime', $request->tanggal ? $request->tanggal : date('Y-m-d'));
@@ -344,6 +343,12 @@ class RegistrationRajalController extends Controller
             } else {
                 $statusRawat = '-';
             }
+            if(env('APP_ENV') == 'local'){
+
+            }else{
+
+            }
+
             $log = LogEncounter::with('user')->where('noreg', $registration->RegistrationNo)->first();
             // $log = LogEncounter::with('user')->where('noreg', 'QREG/RJ/202405030104')->first();
             $datas[] = [
@@ -373,10 +378,16 @@ class RegistrationRajalController extends Controller
                 'log' => $log ? $log : null,
             ];
         }
-        // $datas = collect($datas);
-
         $datas = collect($datas)->where('DischargeDateTime', '!=', null);
+
         // $encounter = collect($datas)->where('ss_encounter_id', '!=', null)->count();
+        // if(env('IS_PROD') == false){
+        //     $datasC = collect($datas)->where('DischargeDateTime', '!=', null)->where('ss_encounter_id_sanbox',  null);
+        // }else{
+        //     $datasC = collect($datas)->where('DischargeDateTime', '!=', null)->where('ss_encounter_id',  null);
+        // }
+
+        // $datas = $datasC;
 
         return response()->json([
             'status' => true,
@@ -406,6 +417,7 @@ class RegistrationRajalController extends Controller
     public function getByNoreg(Request $request)
     {
         $noreg = $request->noreg;
+        // dd($noreg);
         $registration = SphairaRegistration::where('RegistrationNo', $noreg)->first();
         if (strpos($registration->RegistrationNo, 'RI') !== false) {
             $statusRawat = 'RAWAT INAP';
@@ -416,6 +428,7 @@ class RegistrationRajalController extends Controller
         } else {
             $statusRawat = 'lainnya';
         }
+        // dd($registration);
         // preg_match('/^\d+$/', $string, $matches)[0]
         $nadi = RmeAsper::where('asper_reg', $registration->RegistrationNo)->first();
         if ($nadi) {
